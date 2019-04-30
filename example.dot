@@ -1,0 +1,12 @@
+strict graph  {
+0 [node_value=1, color=red];
+1 [node_value=3, color=red];
+2 [node_value=2, color=red];
+3 [node_value=4, color=blue];
+4 [node_value=3, color=blue];
+0 -- 1;
+0 -- 2;
+0 -- 3;
+1 -- 2;
+3 -- 4;
+}
