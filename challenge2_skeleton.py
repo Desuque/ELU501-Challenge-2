@@ -12,6 +12,7 @@ from matplotlib import pylab
 import numpy as np
 import pickle
 from collections import Counter
+from generateGraphPartition import GenerateGraphPartition
 
 
 
@@ -140,6 +141,14 @@ print("Very poor result!!! Try to do better!!!!")
 
 # and compare with the ground truth (what you should have predicted)
 # user precision and recall measures
+
+ggp = GenerateGraphPartition(empty_nodes)
+employer_predictions = ggp.pridictAttributesByCluster(G, empty_nodes, employer)
+with open('mediumEmployer.pickle', 'rb') as handle:
+    groundtruth_employer = pickle.load(handle)
+result=evaluation_accuracy(groundtruth_employer,employer_predictions)
+print("%f%% of the predictions are true" % result)
+print("Very poor result!!! Try to do better!!!!")
 
 def generateCluster(self, graph, node):
     pass
