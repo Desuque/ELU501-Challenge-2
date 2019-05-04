@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import numpy as np
 import networkx as nx
 import metis
 import matplotlib.pyplot as plt
@@ -12,8 +13,8 @@ class GenerateGraphPartition:
         self.nodesclusters = {}
 
     def createEdgesGraph(self, college):
-        graph = nx.read_gexf("mediumLinkedin.gexf")
-
+        
+        """
         print(graph.edges())
         print(graph.nodes())
         (cut, parts) = metis.part_graph(graph, 40)
@@ -25,16 +26,22 @@ class GenerateGraphPartition:
         print(graph['U27476']['U27661'])
         graph.graph['edge_weight_attr'] = 'weight'
         metisGraph = metis.networkx_to_metis(graph)
+        (cutW, partsW) = metis.part_graph(metisGraph, 10)
+        print("paso esto")
         print(graph)
         print(metisGraph)
-
+        """
+        graph = nx.read_gexf("mediumLinkedin.gexf")
         weightedGraph = self.setEdgesWeights(graph, college)
         weightedGraph.graph['edge_weight_attr'] = 'weight'
         metisWeightedGraph = metis.networkx_to_metis(weightedGraph)
+        print("Llego hasta aca")
+        
+        #self.draw_graph(metisWeightedGraph,parts)
+        
+        (cutW, partsW) = metis.part_graph(metisWeightedGraph, 10)
 
-        (cutW, partsW) = metis.part_graph(metisWeightedGraph, 40)
-
-        #self.draw_graph(weightedGraph, partsW)
+        self.draw_graph(weightedGraph, partsW)
 
 
         #self.setNodesClustersDictionary(weightedGraph, parts)
@@ -48,19 +55,22 @@ class GenerateGraphPartition:
         print(parts)
 
     def setEdgesWeights(self, graph, attrs):
-
+        print(attrs)
+        attr=attrs
         for node in graph.nodes():
-
+            
             for nbr in graph.neighbors(node):
                 edgeWeight = 0
-                for attr in attrs:
-                    if node in attr:
-                        if nbr in attr:
-                            for valNbr in attr[nbr]:
-                                for valNode in attr[node]:
-                                    if valNode == valNbr:
-                                        edgeWeight =- 1
+                if (node in attr) and (nbr in attr):
+                   
+                    for valNbr in attr[nbr]:
+                        
+                        for valNode in attr[node]:
+                           
+                            if valNode == valNbr:
+                                edgeWeight =+ 1
                 graph[node][nbr]['weight']=edgeWeight
+               
         return graph
 
     def setNodesClustersDictionary(self, graph, parts):
