@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23f36490-1bf0-4253-99c8-69c4775dce93" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/generateGraphPartition.py" beforeDir="false" afterPath="$PROJECT_DIR$/generateGraphPartition.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mainTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/mainTest.py" afterDir="false" />
     </list>
@@ -16,11 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/generateGraphPartition.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
-              <folding>
-                <element signature="e#111#132#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="1449">
+              <caret line="125" column="91" lean-forward="true" selection-start-line="125" selection-start-column="91" selection-end-line="125" selection-end-column="91" />
             </state>
           </provider>
         </entry>
@@ -28,8 +26,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/challenge2_skeleton.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="669">
-              <caret line="46" column="20" lean-forward="true" selection-start-line="46" selection-start-column="19" selection-end-line="46" selection-end-column="37" />
+            <state relative-caret-position="-786">
+              <caret line="46" column="20" selection-start-line="46" selection-start-column="19" selection-end-line="46" selection-end-column="37" />
               <folding>
                 <element signature="e#89#110#0" expanded="true" />
               </folding>
@@ -41,7 +39,7 @@
         <entry file="file://$PROJECT_DIR$/mainTest.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="450">
-              <caret line="33" column="32" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
+              <caret line="33" column="54" selection-start-line="33" selection-start-column="54" selection-end-line="33" selection-end-column="54" />
               <folding>
                 <element signature="e#110#167#0" expanded="true" />
               </folding>
@@ -254,33 +252,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/challenge2_skeleton.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="669">
-          <caret line="46" column="20" lean-forward="true" selection-start-line="46" selection-start-column="19" selection-end-line="46" selection-end-column="37" />
-          <folding>
-            <element signature="e#89#110#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mainTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="450">
-          <caret line="33" column="32" selection-start-line="33" selection-start-column="32" selection-end-line="33" selection-end-column="32" />
+          <caret line="33" column="54" selection-start-line="33" selection-start-column="54" selection-end-line="33" selection-end-column="54" />
           <folding>
             <element signature="e#110#167#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/challenge2_skeleton.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-786">
+          <caret line="46" column="20" selection-start-line="46" selection-start-column="19" selection-end-line="46" selection-end-column="37" />
+          <folding>
+            <element signature="e#89#110#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/generateGraphPartition.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
-          <folding>
-            <element signature="e#111#132#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1449">
+          <caret line="125" column="91" lean-forward="true" selection-start-line="125" selection-start-column="91" selection-end-line="125" selection-end-column="91" />
         </state>
       </provider>
     </entry>

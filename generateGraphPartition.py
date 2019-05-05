@@ -32,53 +32,62 @@ class GenerateGraphPartition:
         print(metisGraph)
         """
         graph = nx.read_gexf("mediumLinkedin.gexf")
-        weightedGraph = self.setEdgesWeights(graph, college)
+        weightedGraph = nx.read_gexf("mediumLinkedin.gexf")
+
+        #self.draw_graph(graph, parts)
+        weightedGraph = self.setEdgesWeights(weightedGraph, college)
+
+
         weightedGraph.graph['edge_weight_attr'] = 'weight'
         metisWeightedGraph = metis.networkx_to_metis(weightedGraph)
         print("Llego hasta aca")
         
         #self.draw_graph(metisWeightedGraph,parts)
         
-        (cutW, partsW) = metis.part_graph(metisWeightedGraph, 10)
-
-        self.draw_graph(weightedGraph, partsW)
+        (cutW, partsW) = metis.part_graph(metisWeightedGraph, 3)
+        print(partsW)
+        self.draw_graph(graph, partsW)
 
 
         #self.setNodesClustersDictionary(weightedGraph, parts)
 
         #comento el draw para que corra mas rapido
-        #self.draw_graph(graph, parts)
+        #(cutW, partsW) = metis.part_graph(graph, 10)
+        #self.draw_graph(graph, partsW)
 
-        self.getSubgraphByClusterID(graph, 25)
+        #self.getSubgraphByClusterID(graph, 25)
 
-        print(cut)
-        print(parts)
+        #print(cutW)
+        #print(partsW)
 
     def setEdgesWeights(self, graph, attrs):
-        print(attrs)
-        attr=attrs
+
+        weightedGraph = graph
         for node in graph.nodes():
-            
             for nbr in graph.neighbors(node):
                 edgeWeight = 0
-                if (node in attr) and (nbr in attr):
-                   
-                    for valNbr in attr[nbr]:
-                        
-                        for valNode in attr[node]:
-                           
-                            if valNode == valNbr:
-                                edgeWeight =+ 1
-                graph[node][nbr]['weight']=edgeWeight
-               
-        return graph
+                for attr in attrs:
+
+                    if (node in attr) and (nbr in attr):
+
+                        for valNbr in attr[nbr]:
+
+                            for valNode in attr[node]:
+
+                                if valNode == valNbr:
+                                    edgeWeight = edgeWeight - 1
+                weightedGraph[node][nbr]['weight'] = edgeWeight
+                if (edgeWeight<0):
+                    print(edgeWeight)
+
+        return weightedGraph
 
     def setNodesClustersDictionary(self, graph, parts):
         i = 0
         for node in graph.nodes():
             # Set dictionary of clusters
             self.nodesclusters[node] = parts[i]
-            i += 1
+            i += 13
 
         print("Dictionary:", self.nodesclusters)
 
@@ -128,7 +137,7 @@ class GenerateGraphPartition:
             A list of all the potential values of node_attribute to assign one color
             per value.
         """
-        # initialze Figure
+        # initialize Figure
         plt.figure(num=None, figsize=(80, 80), dpi=80)
         plt.axis('off')
         fig = plt.figure(1)
@@ -149,10 +158,10 @@ class GenerateGraphPartition:
         nx.draw_networkx_nodes(g, pos, cmap=plt.get_cmap('jet'), node_color=values)
         #### lo comento para que corra mas rapido
 
-        #nx.draw_networkx_edges(g, pos)
-        #nx.draw_networkx_labels(g, pos)
+        nx.draw_networkx_edges(g, pos)
+        nx.draw_networkx_labels(g, pos)
 
-        #plt.show()
-        #plt.savefig('foo.png')
-        #pylab.close()
-        #del fig
+        plt.show()
+        plt.savefig('foo.png')
+        pylab.close()
+        del fig

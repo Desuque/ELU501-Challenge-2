@@ -31,7 +31,7 @@ def mainTest():
 
     print("hola")
     ggp = GenerateGraphPartition(empty_nodes)
-    ggp.createEdgesGraph(college)
+    ggp.createEdgesGraph([college, location, employer])
     print("hola")
 
 
