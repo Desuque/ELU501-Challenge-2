@@ -56,7 +56,48 @@ def naive_method(graph, empty, attr):
             a,nb_occurrence=max(cpt.items(), key=lambda t: t[1])
             predicted_values[n].append(a)
     return predicted_values
+
+
+def weighted_naive_method(graph, empty, attr):
+    """   Predict the missing attribute with a simple but effective
+    relational classifier. 
     
+    The assumption is that two connected nodes are 
+    likely to share the same attribute value. Here we chose the most frequently
+    used attribute by the neighbors
+    
+    Parameters
+    ----------
+    graph : graph
+       A networkx graph
+    empty : list
+       The nodes with empty attributes 
+    attr : dict 
+       A dict of attributes, either location, employer or college attributes. 
+       key is a node, value is a list of attribute values.
+
+    Returns
+    -------
+    predicted_values : dict 
+       A dict of attributes, either location, employer or college attributes. 
+       key is a node (from empty), value is a list of attribute values. Here 
+       only 1 value in the list.
+     """
+    predicted_values={}
+    for n in empty:
+        nbrs_attr_values=[] 
+        for nbr in graph.neighbors(n):
+            if nbr in attr:
+                for val in attr[nbr]:
+                    nbrs_attr_values.append(val)
+        predicted_values[n]=[]
+        if nbrs_attr_values: # non empty list
+            # count the number of occurrence each value and returns a dict
+            cpt=Counter(nbrs_attr_values)
+            # take the most represented attribute value among neighbors
+            a,nb_occurrence=max(cpt.items(), key=lambda t: t[1])
+            predicted_values[n].append(a)
+    return predicted_values    
  
 def evaluation_accuracy(groundtruth, pred):
     """    Compute the accuracy of your model.
@@ -143,7 +184,7 @@ print("Very poor result!!! Try to do better!!!!")
 # user precision and recall measures
 
 ggp = GenerateGraphPartition(empty_nodes)
-employer_predictions = ggp.pridictAttributesByCluster(G, empty_nodes, employer)
+employer_predictions = ggp.predictAttributesByCluster(G, empty_nodes,[college, location, employer])
 with open('mediumEmployer.pickle', 'rb') as handle:
     groundtruth_employer = pickle.load(handle)
 result=evaluation_accuracy(groundtruth_employer,employer_predictions)

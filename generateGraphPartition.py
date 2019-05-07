@@ -44,7 +44,7 @@ class GenerateGraphPartition:
         
         #self.draw_graph(metisWeightedGraph,parts)
         
-        (cutW, partsW) = metis.part_graph(metisWeightedGraph, 3)
+        (cutW, partsW) = metis.part_graph(metisWeightedGraph, 5)
         print(partsW)
         self.draw_graph(graph, partsW)
 
@@ -65,7 +65,7 @@ class GenerateGraphPartition:
         weightedGraph = graph
         for node in graph.nodes():
             for nbr in graph.neighbors(node):
-                edgeWeight = 0
+                edgeWeight = 1
                 for attr in attrs:
 
                     if (node in attr) and (nbr in attr):
@@ -75,8 +75,9 @@ class GenerateGraphPartition:
                             for valNode in attr[node]:
 
                                 if valNode == valNbr:
-                                    edgeWeight = edgeWeight - 1
+                                    edgeWeight = edgeWeight + 1
                 weightedGraph[node][nbr]['weight'] = edgeWeight
+                print(edgeWeight)
                 if (edgeWeight<0):
                     print(edgeWeight)
 
@@ -87,7 +88,7 @@ class GenerateGraphPartition:
         for node in graph.nodes():
             # Set dictionary of clusters
             self.nodesclusters[node] = parts[i]
-            i += 13
+            i += 1
 
         print("Dictionary:", self.nodesclusters)
 
@@ -101,8 +102,17 @@ class GenerateGraphPartition:
 
         return subgraph
 
-    def pridictAttributesByCluster(self, graph, emptyNodes, attr):
-        (cut, parts) = metis.part_graph(graph, 10, recursive = True)
+    def predictAttributesByCluster(self, graph, emptyNodes, attrs):
+        
+        #starts new method
+        weightedGraph = graph
+        weightedGraph = self.setEdgesWeights(weightedGraph, attrs)
+        weightedGraph.graph['edge_weight_attr'] = 'weight'
+        metisWeightedGraph = metis.networkx_to_metis(weightedGraph)
+        (cut, parts) = metis.part_graph(metisWeightedGraph, 10)
+        #new method ends
+        
+        #(cut, parts) = metis.part_graph(graph, 10, recursive = True)
         print(cut)
         self.setNodesClustersDictionary(graph, parts)
 
@@ -111,9 +121,10 @@ class GenerateGraphPartition:
             nbrs_attr_values = []
             clusterID = self.nodesclusters[node]
             for nbr in self.getSubgraphByClusterID(graph, clusterID):
-                if nbr in attr:
-                    for val in attr[nbr]:
-                        nbrs_attr_values.append(val)
+                for attr in attrs:
+                    if nbr in attr:
+                        for val in attr[nbr]:
+                            nbrs_attr_values.append(val)
             predicted_values[node] = []
             if nbrs_attr_values:  # non empty list
                 # count the number of occurrence each value and returns a dict
@@ -153,7 +164,7 @@ class GenerateGraphPartition:
             values.append(parts[i])
             i += 1
 
-        print("Dictionary:", self.nodesclusters)
+        #print("Dictionary:", self.nodesclusters)
 
         nx.draw_networkx_nodes(g, pos, cmap=plt.get_cmap('jet'), node_color=values)
         #### lo comento para que corra mas rapido

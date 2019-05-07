@@ -1,0 +1,6 @@
+
+1) Usar metodo naive con pesos (sin clustering)
+2) Modificar la asignacion de pesos del clustering
+3) Recalcular el clustering cada vez que asignamos un atributo
+4) Asignar los pesos por enlance y no por nodo 
+
