@@ -299,3 +299,174 @@ with open('mediumEmployer.pickle', 'rb') as handle:
 result = evaluation_accuracy(groundtruth_employer, employer_predictions)
 print("Employer kClick: %f%% of the predictions are true" % result)
 
+
+"""
+CODIGO A TESTEAR
+def x_init(G):
+    from random import randint
+    xValues={}
+    for ​ node​ ​ in ​ G.nodes :
+        if ​ node​ ​ not in ​ xValues :
+            xValues[node]={}
+        for ​ n ​ ​ in ​ G.neighbors(node):
+            x = randint(​ 1 ​ , ​ 2 ​ )
+            if ​ n ​ ​ not in ​ xValues :
+                xValues[n]={}
+                xValues[node].update({n:x})
+                xValues[n].update({node:x})
+            else ​ :
+                if ​ node​ ​ not in ​ xValues[n]:
+                    xValues[n].update({node:x})
+                    xValues[node].update({n:x})
+    return ​ xValues
+
+def f_init​(G, empty_nodes, location, employer, college):
+        fVectors={}
+        locations=getallpossible(location)
+        colleges=getallpossible(college)
+        employers=getallpossible(employer)
+        totLen=​ len​ (locations)+​ len​ (colleges)+​ len​ (employers)
+        indC=dict(​ zip​ (colleges,[i​ ​ for ​ i ​ ​ in ​ range​ ( ​ 0 ​ , ​ len​ (colleges))]))
+        invC=dict(​ zip​ ([i​ ​ for ​ i ​ ​ in ​ range​ ( ​ 0 ​ , ​ len​ (colleges))],colleges))
+        indE=dict(​ zip​ (employers,[i​ ​ for ​ i ​ ​ in
+    range​ ( ​ len​ (colleges)​ , ​ len​ (colleges)+​ len​ (employers))]))
+        invE=dict(​ zip​ ([i​ ​ for ​ i ​ ​ in
+    range​ ( ​ len​ (colleges)​ , ​ len​ (colleges)+​ len​ (employers))]​ , ​ employers))
+        indL=dict(​ zip​ (locations,[i​ ​ for ​ i ​ ​ in
+    range​ ( ​ len​ (colleges)+​ len​ (employers),totLen)]))
+        invL=dict(​ zip​ ([i​ ​ for ​ i ​ ​ in
+    range​ ( ​ len​ (colleges)+​ len​ (employers),totLen)],locations))
+        ind={**indC, **indE, **indL}
+        inv={**invC, **invE, **invL}
+        omega1=[​ 0 ​ for ​ i ​ ​ in ​ range​ ( ​ len​ (colleges))]
+        11omega1.extend([​ 1 ​ for ​ i ​ ​ in ​ range​ ( ​ len​ (employers))])
+        omega1.extend([​ 1 ​ for ​ i ​ ​ in ​ range​ ( ​ len​ (locations))])
+        omega2=[​ 1 ​ for ​ i ​ in ​ range​ ( ​ len​ (colleges))]
+        omega2.extend([​ 0 ​ for ​ i ​ ​ in ​ range​ ( ​ len​ (employers))])
+        omega2.extend([​ 1 ​ for ​ i ​ ​ in ​ range​ ( ​ len​ (locations))])
+        for ​ node​ ​ in ​ G.nodes :
+            if ​ node​ ​ not in ​ empty_nodes :
+                fVectors[node]=np.zeros((​ 1 ​ , ​ totLen)).tolist()[0]
+                if ​ node​ ​ in ​ location :
+                    for ​ loc​ ​ in ​ location[node]:
+                        fVectors[node][ind[loc]]=​ 1
+                if ​ node​ ​ in ​ college :
+                    for ​ col​ ​ in ​ college[node]:
+                        fVectors[node][ind[col]]=​ 1
+                if ​ node​ ​ in ​ employer :
+                    for ​ emp​ ​ in ​ employer[node]:
+                        fVectors[node][ind[emp]]=​ 1
+            else ​ :
+                fVectors[node]=[​ 0.5 ​ for ​ i ​ ​ in ​ range​ (totLen)]
+    return ​ fVectors, omega1, omega2, ind, inv, locations, colleges,employers
+
+def predict​(empty_nodes, location, employer, college, fVectors,colleges, employers, inv):
+    pred_l, pred_c, pred_e=[], [], []
+    for ​ node​ ​ in ​ empty_nodes :
+        fVec=fVectors[node]
+        colVect=fVec[:​ len​ (colleges)]
+        empVect=fVec[​ len​ (colleges):​ len​ (colleges)+​ len​ (employers)]
+        locVect=fVec[​ len​ (colleges)+​ len​ (employers):]
+        bestColleges=np.argwhere(colVect ==
+        np.amax(colVect)).flatten().tolist()
+        bestEmployers = np.argwhere(empVect ==
+        np.amax(empVect)).flatten().tolist()
+        bestLocations= np.argwhere(locVect ==
+        np.amax(locVect)).flatten().tolist()
+        if ​ len​ (bestColleges)<​ 2 ​ :
+            pred_c[node] = []
+            for ​ col​ ​ in ​ bestColleges :
+                pred_c[node].append(inv[col])
+        if ​ len​ (bestEmployers)<​ 5 ​ :
+            pred_e[node] = []
+            for ​ emp​ ​ in ​ bestEmployers :
+                pred_e[node].append(inv[emp+len(colleges)])
+        if ​ len​ (bestLocations)<​ 2 ​ :
+            pred_l[node] = []
+            for ​ loc​ ​ in ​ bestLocations:
+                pred_l[node].append(inv[loc+len(colleges)+len(employers)])
+   return ​ pred_l, pred_e, pred_c
+
+def coprofiling​(G, empty_nodes, location, employer, college):
+    location2, employer2, college2, newempty= location, employer, college,empty_nodes
+    fVectors, omega1, omega2, ind, inv, locations, colleges, employers = f_init(G,newempty, location2, employer2,college2)
+    xValues = x_init(G)
+    nbnode =​ ​ 0
+    for ​ xm​ ​ in ​ range ​ ( ​ 3 ​ ) :
+        for ​ empty_node​ ​ in ​ newempty:
+            print​ ( ​ "Ongoing : %d / %d" ​ % (nbnode, len(newempty)))
+            fVectorsnext = fVectors
+            circle1 = []
+            circle2 = []
+            for ​ num​ ​ in ​ range(​ 30​ ):
+                # print("Iteration %d sur 10"%num)
+                # UPDATE f
+                for ​ neigh​ ​ in ​ G.neighbors(empty_node):
+                    if ​ xValues[neigh][empty_node] == ​ 1 ​ :
+                        circle1.append(neigh)
+                    else​ :
+                        circle2.append(neigh)
+                for ​ neigh​ ​ in ​ circle1:
+                    if ​ neigh​ ​ in ​ newempty:
+                    L =​ ​ len​ (omega1)
+                    for ​ i ​ ​ in​ range(L):
+                        if ​ omega1[i] ==​ ​ 1 ​ :
+                            fVectorsnext[neigh][i] = fVectors[empty_node][i]
+                            for ​ n2​ ​ in ​ circle1:
+                                if ​ n2 != neigh:
+                                    fVectorsnext[neigh][i] += fVectors[n2][i]
+                            fVectorsnext[neigh][i] /= ​ 1 ​ + ​ ​ len​ (circle1)
+                for ​ neigh​ ​ in ​ circle2:
+                    if ​ neigh​ ​ in ​ newempty:
+                    L =​ ​ len​ (omega2)
+                    for ​ i ​ ​ in ​ range​ (L):
+                        if ​ omega2[i] ==​ ​ 1 ​ :
+                            fVectorsnext[neigh][i] = fVectors[empty_node][i]
+                            for ​ n2​ ​ in ​ circle2:
+                                if ​ n2 != neigh:
+                                    fVectorsnext[neigh][i] += fVectors[n2][i]
+                            fVectorsnext[neigh][i] /=​ ​ 1 ​ + ​ ​ len​ (circle2)
+                for ​ i ​ ​ in ​ range​ (L):
+                    den =​ ​ 1
+                    if ​ omega1[i] ==​ ​ 1 ​ :
+                        den +=​ ​ len​ (omega1)
+                        for ​ neigh​ ​ in ​ circle1:
+                            fVectorsnext[empty_node][i] += fVectorsnext[neigh][i]
+                    if ​ omega2[i] ==​ ​ 1 ​ :
+                        den +=​ ​ len​ (omega2)
+                        for ​ neigh​ ​ in ​ circle2:
+                            fVectorsnext[empty_node][i] += fVectorsnext[neigh][i]
+                    fVectorsnext[empty_node][i] /= den
+                fVectors = fVectorsnext
+                # UPDATE X
+                xValuesnext = xValues
+                for ​ neigh​ ​ in ​ G.neighbors(empty_node):
+                    soust = [fi - f0​ ​ for ​ (fi, f0)​ ​ in ​ zip​ (fVectors[neigh],fVectors[empty_node])]
+                    a = -​ 0.7 ​ * ((np.dot(omega1, soust)) **​ ​ 2 ​ )
+                    b =​ ​ - ​ 0.7 ​ * ((np.dot(omega2, soust)) **​ ​ 2 ​ )
+                    for ​ nj​ ​ in ​ circle1:
+                        soust = [fi - fj​ ​ for ​ (fi, fj)​ ​ in ​ zip​ (fVectors[neigh],fVectors[nj])]
+                        a +=​ ​ 1 ​ - ​ ​ 0.7 ​ * ((np.dot(omega1, soust)) **​ ​ 2 ​ )
+                    for ​ nj​ ​ in ​ circle2:
+                        soust = [fi - fj​ ​ for ​ (fi, fj)​ ​ in ​ zip​ (fVectors[neigh],fVectors[nj])]
+                        b +=​ ​ 1 ​ -​ ​ 0.7 ​ * ((np.dot(omega2, soust)) ** ​ 2 ​ )
+                    if ​ neigh​ ​ not in ​ empty_nodes:
+                        a += -​ 7 ​ * ((np.dot(omega1, fVectors[neigh]) -​ ​ 1 ​ ) ** ​ 2 ​ )
+                        b += -​ 7 ​ * ((np.dot(omega2, fVectors[neigh]) -​ ​ 1 ​ ) **​ ​ 2 ​ )
+                    if ​ a > b:
+                        xValuesnext[neigh][empty_node] =​ ​ 1
+                        xValuesnext[empty_node][neigh] =​ ​ 1
+                    else​ :
+                        xValuesnext[neigh][empty_node] =​ ​ 2
+                        xValuesnext[empty_node][neigh] =​ ​ 2
+                xValues = xValuesnext
+            nbnode +=​ ​ 1
+            predLoc, predEmp, predCol = predict(empty_nodes, location, employer,college, fVectors, colleges, employers, inv)
+            if ​ predLoc :
+                print​ ( ​ "Location ("​ , ​ len​ (predLoc.items())​ , ​ ") : "​ ,evaluation_accuracy(groundtruth_location, predLoc))
+            if ​ predEmp :
+                print​ ( ​ "Employers ("​ , ​ len​ (predEmp.items())​ , ​ ") : "​ ,evaluation_accuracy(groundtruth_employer, predEmp))
+            if ​ predCol :
+                print​ ( ​ "Colleges ("​ , ​ len​ (predCol.items())​ , ​ ") : "​ ,evaluation_accuracy(groundtruth_college, predCol))
+   return ​ xValues, fVectors, predLoc, predEmp, predCol
+"""
