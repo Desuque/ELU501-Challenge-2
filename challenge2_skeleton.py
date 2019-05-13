@@ -144,8 +144,6 @@ def kClicMethod(graph, empty_nodes, attr, location, college, employer, location_
 
     # Dictionnary { node : number of empty neighbors }
     predicted_values = {}
-    print("a ver:", nb_empty_neigh)
-    #for n in empty_nodes:
     for n in sorted(nb_empty_neigh, key=lambda t: t[1]):
         nbrs_attr_values = []
         for nbr in graph.neighbors(n):
@@ -154,25 +152,12 @@ def kClicMethod(graph, empty_nodes, attr, location, college, employer, location_
                     nbrs_attr_values.append(val)
                     if location_predictions is not None:
                         if location_predictions[n] == location[nbr]:
-                            #print("entre")
                             nbrs_attr_values.append(val)
 
                     if college_predictions is not None:
                         if college_predictions[n] == college[nbr]:
-                            #print("coincidio algo")
                             nbrs_attr_values.append(val)
-                        """
-                        if location_predictions[n] == location[nbr] and college_predictions[n] == college[nbr]:
-                            print("coincidio todo")
-                            nbrs_attr_values.append(val)
-                            nbrs_attr_values.append(val)
-                            nbrs_attr_values.append(val)
-                        #else:
-                            #print("a ver predicion: ", location_predictions[n])
-                            #print("a ver el vecino: ", location[nbr])
-                            #nbrs_attr_values.append(val)
-                    """
-        #print("a ver aue tiene sesto: ", nbrs_attr_values)
+
         predicted_values[n] = []
 
         if nbrs_attr_values:  # non empty list
@@ -180,11 +165,32 @@ def kClicMethod(graph, empty_nodes, attr, location, college, employer, location_
             cpt = Counter(nbrs_attr_values)
             # take the most represented attribute value among neighbors
             a, nb_occurrence = max(cpt.items(), key=lambda t: t[1])
-            #print("a ver que tiene: ", a)
             predicted_values[n].append(a)
-            #print("a ver que tiene esto: ", predicted_values[n])
 
     return predicted_values
+
+
+def getInfluencers(graph, location, location_predictions=None):
+    influencers = []
+    # Hardcoded area
+    bay_area = ['san francisco bay area']
+
+    for n in graph.nodes():
+        node_weight = 0
+        for ngb in graph.neighbors(n):
+            if ngb in location.keys():
+                if location[ngb] == bay_area:
+                    node_weight += 1  # Location weight
+            if location_predictions is not None:
+                if ngb in location_predictions.keys():
+                    if location_predictions[ngb] == bay_area:
+                        node_weight += 0.5  # Prediction location weight
+
+        if node_weight is not 0:
+            influencers.append((n, node_weight))
+
+    influencers = sorted(influencers, key=lambda t: t[1], reverse=True)
+    return influencers[:5]
 
 # load the graph
 G = nx.read_gexf("mediumLinkedin.gexf")
@@ -248,6 +254,10 @@ result = evaluation_accuracy(groundtruth_location, location_predictions)
 print("Location: %f%% of the predictions are true" % result)
 
 print()
+print("NQIVE INFLUENCERS METOD:", getInfluencers(G, location, location_predictions))
+print()
+
+print()
 print("### ### ### ### ### ### ### ### ### ### ### ###")
 print()
 
@@ -278,8 +288,13 @@ result = evaluation_accuracy(groundtruth_location, location_predictions)
 print("Location nuestro: %f%% of the predictions are true" % result)
 
 print()
+print("METIS INFLUENCERS METOD:", getInfluencers(G, location, location_predictions))
+print()
+
+print()
 print("### ### ### ### ### ### ### ### ### ### ### ###")
 print()
+
 
 location_predictions = kClicMethod(G, empty_nodes, location, location, college, employer)
 with open('mediumLocation.pickle', 'rb') as handle:
@@ -299,6 +314,13 @@ with open('mediumEmployer.pickle', 'rb') as handle:
 result = evaluation_accuracy(groundtruth_employer, employer_predictions)
 print("Employer kClick: %f%% of the predictions are true" % result)
 
+print()
+print("KCLICK INFLUENCERS METOD:", getInfluencers(G, location, location_predictions))
+print()
+
+print()
+print("GROUND REAL INFLUENCERS METOD:", getInfluencers(G, groundtruth_location))
+print()
 
 """
 CODIGO A TESTEAR
